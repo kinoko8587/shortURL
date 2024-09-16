@@ -4,3 +4,22 @@ services:
     build: .
     ports:
       - "8080:8080"
+    volumes:
+      - .:/app   # Mount the current directory to /app in the container
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=mysecretpassword
+      - DB_NAME=mydatabase
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"

@@ -1,31 +1,47 @@
 # Step 1: Build stage
 FROM golang:1.23-alpine AS build
 
-# Set the working directory inside the container
+# Install dependencies for building the Go app
+RUN apk add --no-cache git build-base
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the Go modules manifests
+# Copy go.mod and go.sum to download Go dependencies
 COPY go.mod go.sum ./
 
 # Download Go modules
 RUN go mod download
 
-# Copy the source code into the container
+# Copy the entire source code
 COPY . .
 
-# Build the Go app
+# Build the Go app and output binary as main
 RUN go build -o main .
 
-# Step 2: Run stage
+# Step 2: Final stage for runtime (hot reload using air)
 FROM alpine:latest
 
-WORKDIR /root/
+# Install dependencies required for the final runtime
+RUN apk add --no-cache bash libc6-compat curl
 
-# Copy the binary from the build stage
-COPY --from=build /app/main .
+# Install air for hot reloading
+RUN curl -sSfL https://raw.githubusercontent.com/air-verse/air/master/install.sh | sh -s -- -b /usr/local/bin
 
-# Expose the port on which the app runs
+# Set the working directory
+WORKDIR /app
+
+# Copy the compiled Go binary from the build stage
+COPY --from=build /app/main /app/main
+
+# Copy the source code for air to watch
+COPY . .
+
+# Copy the air.toml configuration file
+COPY air.toml .
+
+# Expose the application port
 EXPOSE 8080
 
-# Command to run the application
-CMD ["./main"]
+# Use air to hot reload the pre-built binary
+CMD ["air"]
