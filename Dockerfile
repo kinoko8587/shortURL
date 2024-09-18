@@ -17,28 +17,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app and output binary as main
-RUN go build -o main .
-
-# Step 2: Final stage for runtime (hot reload using air)
-FROM alpine:latest
-
-# Install dependencies required for the final runtime
-RUN apk add --no-cache bash libc6-compat curl
-
-# Install air for hot reloading
-RUN curl -sSfL https://raw.githubusercontent.com/air-verse/air/master/install.sh | sh -s -- -b /usr/local/bin
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the compiled Go binary from the build stage
-COPY --from=build /app/main /app/main
-
-# Copy the source code for air to watch
-COPY . .
-
-# Copy the air.toml configuration file
-COPY air.toml .
+RUN go install github.com/air-verse/air@latest
 
 # Expose the application port
 EXPOSE 8080

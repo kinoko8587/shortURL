@@ -1,11 +1,11 @@
 version: '1.0'
 services:
-  web:
+  go:
     build: .
     ports:
       - "8080:8080"
     volumes:
-      - .:/app   # Mount the current directory to /app in the container
+      - .:/app
     depends_on:
       - db
     environment:
