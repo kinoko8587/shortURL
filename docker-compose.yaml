@@ -1,7 +1,10 @@
-version: '1.0'
+version: "3.8"
 services:
-  go:
-    build: .
+  web:
+    build:
+      context: .
+      # Correct the path to your Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:
@@ -12,7 +15,7 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=postgres
-      - DB_PASSWORD=mysecretpassword
+      - DB_PASSWORD=12345678
       - DB_NAME=mydatabase
   db:
     image: postgres:15-alpine

@@ -23,4 +23,4 @@ RUN go install github.com/air-verse/air@latest
 EXPOSE 8080
 
 # Use air to hot reload the pre-built binary
-CMD ["air"]
+CMD ["air", "-c", ".air.toml"]
