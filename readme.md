@@ -17,6 +17,7 @@ docker-compose up --build
 - infrastructure: define the data source
 
 ### API
+- use gin
 - POST: Create a new resource
 - GET: Read an existing resource
 - PUT: Update an existing resource
@@ -28,7 +29,20 @@ docker-compose up --build
 - the token bucket is a list of tokens
 - each token is a timestamp
 
+#### testing
+- use curl to test the API
+- use docker compose to run the service and test the API
+- With a for loop to simulate spam, should return 429
+``
+for i in {1..20}; do
+  curl -s -o /dev/null -w "%{http_code}\n" -H "X-User-ID: test-user" http://localhost:8080/ping
+done
+``
+- with Different IPs / Users
+``
+curl -H "X-User-ID: user1" http://localhost:8080/ping
+curl -H "X-User-ID: user2" http://localhost:8080/ping
+``
+
 ### database
 - use postgres
-
-
